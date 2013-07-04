@@ -28,18 +28,21 @@ defined('MOODLE_INTERNAL') || die;
  * Draw a common table of contents.
  */
 function sdctools_tableofcontents() {
-    global $OUTPUT;
+    global $OUTPUT, $pictures;
     
     $out = '';
 
-//    $out .= $OUTPUT->box_start();
-//    $out .= $OUTPUT->heading(get_string('tableofcontents', 'tool_sdctools'));
     $out .= '<ul>';
     $out .= '<li><a href="index.php">'.get_string('pluginname', 'tool_sdctools').'</a></li>';
     $out .= '<li><a href="emails.php">'.get_string('emailchecks', 'tool_sdctools').'</a></li>';
-    $out .= '<li><a href="coursereports.php">'.get_string('coursereports', 'tool_sdctools').'</a></li>';
+    //$out .= '<li><a href="coursereports.php">'.get_string('coursereports', 'tool_sdctools').'</a>';
+    //$out .= ' (<a href="coursereports.php?pictures=1">'.get_string('coursereportspictures', 'tool_sdctools').'</a>)</li>';
+
+    $out .= '<li>'.html_writer::link(new moodle_url('coursereports.php'), get_string('coursereports', 'tool_sdctools'));
+
+    $out .= ' ('.html_writer::link(new moodle_url('coursereports.php', array('pictures' => 1)), get_string('coursereportspictures', 'tool_sdctools')).')</li>';
+
     $out .= '<ul>';
-//    $out .= $OUTPUT->box_end();
 
     return $out;
 }
@@ -47,9 +50,9 @@ function sdctools_tableofcontents() {
 /**
  * Pit the course's ID at the start of the name.
  */
-function sdctools_idprefix($array) {
+function sdctools_idprefix($in) {
     $out = '';
-    foreach ($array as $key => $value) {
+    foreach ($in as $key => $value) {
         $out[$key] = $key.': '.$value;
     }
 
@@ -59,10 +62,10 @@ function sdctools_idprefix($array) {
 /**
  * A 'time ago' script.
  */
-function sdctools_timeago($int) {
+function sdctools_timeago($int, $ago = true) {
 
-    $in = (time() - $int);
-
+    $in = ($ago) ? (time() - $int) : $int;
+    
     $secsyear = 60*60*24*365.25;
     $secsday  = 60*60*24;
     $secshour = 60*60;
@@ -79,6 +82,7 @@ function sdctools_timeago($int) {
     $seconds = intval($remainder);
     
     $out = '';
+    // Omit any period of time with no data.
     if ($years) {
         $out .= $years;
         $out .= ($years == 1) ? ' year, ' : ' years, ';
@@ -95,8 +99,22 @@ function sdctools_timeago($int) {
         $out .= $minutes;
         $out .= ($minutes == 1) ? ' minute, ' : ' minutes, ';
     }
-    $out .= $seconds;
-    $out .= ($seconds == 1) ? ' second' : ' seconds';
+    if ($seconds) {
+        $out .= $seconds;
+        $out .= ($seconds == 1) ? ' second' : ' seconds';
+    }
 
     return $out;
+}
+
+/**
+ * Trimming the ', ' off the end of a string.
+ */
+function sdctools_trimcomma($in) {
+    $in = trim($in);
+    if (substr($in, -1) == ',') {
+        return  substr($in, 0, strlen($in)-1);
+    } else {
+        return $in;
+    }
 }

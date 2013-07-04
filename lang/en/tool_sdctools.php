@@ -26,12 +26,14 @@ $string['pluginname']       = 'SDC Tools';
 $string['pageheader']       = 'South Devon College Admin Tools';
 
 // Table of contents strings.
-$string['tableofcontents']  = 'Table of Contents';
-$string['emailchecks']      = 'Email Checks';
-$string['coursereports']    = 'Course Reports';
+$string['tableofcontents']        = 'Table of Contents';
+$string['emailchecks']            = 'Email Checks';
+$string['coursereports']          = 'Course Reports';
+$string['coursereportspictures']  = 'with pictures';
 
 // Server details strings.
 $string['serverdetailsheader']  = 'Server details';
+$string['moodledetailsheader']  = 'Moodle details';
 
 // Email-checking strings.
 $string['emptyemailname']   = 'Empty email check';
@@ -53,3 +55,5 @@ $string['byname']           = '...name:';
 $string['byid']             = '...course ID:';
 $string['getcoursereport']  = 'Get this course\'s report';
 $string['coursereportfor']  = 'Course report for ';
+$string['turnpicturesoff']  = 'Turn pictures off';
+$string['turnpictureson']   = 'Turn pictures on';

@@ -49,7 +49,7 @@ echo sdctools_tableofcontents();
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(get_string('serverdetailsheader', 'tool_sdctools'));
 
-echo '<ul><li><strong>Moodle Version:</strong> '.$CFG->release.' [Internal: '.$CFG->version.']</li>';
+echo '<ul>';
 if (is_readable('/proc/version') && $osver = @file('/proc/version')) {
     echo '<li><strong>Operating System:</strong> '.$osver[0].'</li>';
 }
@@ -71,36 +71,28 @@ echo '<li><strong>Web Server:</strong> '.$_SERVER["SERVER_SOFTWARE"].'</li>';
 echo '<li><strong>PHP Version:</strong> '.phpversion().'</li>';
 if (is_readable('/proc/uptime') && $uptime = @file('/proc/uptime')) {
     $utime = explode(' ', $uptime[0]);
-
-    $years = intval($utime[0] / (60*60*24*365.25));
-    $remainder = $utime[0] % (60*60*24*365.25);
-    $days = intval($remainder / (60*60*24));
-    $remainder = $remainder % (60*60*24);
-    $hours = intval($remainder / (60*60));
-    $remainder = $remainder % (60*60);
-    $minutes = intval($remainder / 60);
-    $remainder = $remainder % 60;
-    $seconds = intval($remainder);
-    
-    $out = $years;
-    $out .= ($years == 1) ? ' year, ' : ' years, ';
-    $out .= $days;
-    $out .= ($days == 1) ? ' day, ' : ' days, ';
-    $out .= $hours;
-    $out .= ($hours == 1) ? ' hour, ' : ' hours, ';
-    $out .= $minutes;
-    $out .= ($minutes == 1) ? ' minute, ' : ' minutes, ';
-    $out .= $seconds;
-    $out .= ($seconds == 1) ? ' second.' : ' seconds.';
+    $out = sdctools_timeago($utime[0], false);
     echo '<li><strong>Server Uptime:</strong> '.$out.'</li>';
 }
+echo '</ul>';
 
+echo $OUTPUT->heading(get_string('moodledetailsheader', 'tool_sdctools'));
+
+echo '<ul>';
+echo '<li><strong>Moodle Version:</strong> '.$CFG->release.' [Internal: '.$CFG->version.']</li>';
+$users_active = $DB->get_record_sql('SELECT COUNT(*) AS users FROM mdl_user WHERE deleted = 0;');
+$users_deleted = $DB->get_record_sql('SELECT COUNT(*) AS users FROM mdl_user WHERE deleted = 1;');
+echo '<li><strong>Users: Active / Deleted / Total:</strong> '.number_format($users_active->users).' / '.number_format($users_deleted->users).' / '.number_format($users_active->users + $users_deleted->users).'</li>';
+$courses_visible = $DB->get_record_sql('SELECT COUNT(*) AS courses FROM mdl_course WHERE visible = 1;');
+$courses_hidden = $DB->get_record_sql('SELECT COUNT(*) AS courses FROM mdl_course WHERE visible = 0;');
+echo '<li><strong>Courses: Visible / Hidden / Total:</strong> '.number_format($courses_visible->courses).' / '.number_format($courses_hidden->courses).' / '.number_format($courses_visible->courses + $courses_hidden->courses).'</li>';
 // backups
 $out = '';
 $backup_status = $DB->get_record('config_plugins', array('plugin' => 'backup', 'name' => 'backup_auto_active'), 'value');
 if ($backup_status->value == 0) {
     // Disabled.
-    $out = '<span class="error">'.get_string('autoactivedisabled', 'backup').'</span>';
+    $out = '<span class="error">'.get_string('autoactivedisabled', 'backup').'</span> ('.
+        html_writer::link(new moodle_url('/admin/settings.php', array('section' => 'automated')), get_string('automatedsetup', 'backup')).')';
 } else if ($backup_status->value == 1) {
     // Enabled.
     $out = get_string('autoactiveenabled', 'backup');
@@ -113,6 +105,7 @@ if ($backup_running && $backup_running->value == 1) {
     $out .= ' and running';
 }
 echo '<li><strong>Backup Status:</strong> '.$out.'</li>';
+
 
 echo '</ul>';
 

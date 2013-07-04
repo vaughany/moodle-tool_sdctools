@@ -32,7 +32,8 @@ require_once('locallib.php');
 
 admin_externalpage_setup('toolsdctoolscourse');
 
-$cid = optional_param('id', false, PARAM_INT);
+$cid = optional_param('id', 0, PARAM_INT);
+$pictures = optional_param('pictures', 0, PARAM_INT);
 
 if (empty($CFG->loginhttps)) {
     $securewwwroot = $CFG->wwwroot;
@@ -49,7 +50,6 @@ echo sdctools_tableofcontents();
 
 /* If we have a course ID, print a nice report about that course. */
 if ($cid) {
-    //print ('got a cid: '.$cid);
 
     $course = $DB->get_record('course', array('id' => $cid), '*');
 
@@ -76,17 +76,18 @@ if ($cid) {
     echo '  <dd><b>ID:</b> '.$course->id.'</dd>';
     $idnumber = ($course->idnumber == '') ? '<i>(blank)</i>' : $course->idnumber; 
     echo '  <dd><b>ID number:</b> '.$idnumber.'</dd>';
-    $visible = ($course->visible == 1) ? get_string('yes') : get_string('no');
+    $visible = ($course->visible == 1) ? get_string('yes') : '<span class="error">'.get_string('no').'</span>';
     echo '  <dd><b>Visible:</b> '.$visible.'</dd>';
     echo '</dl>';
 
     echo '<dl>';
     echo '<dt>Created and Modified</dt>';
-    echo '  <dd><b>Creation date:</b> '.strftime(get_string('strftimedaydate'), $course->timecreated).' ('.sdctools_timeago($course->timecreated).' ago)</dd>';
-    echo '  <dd><b>Last modified date:</b> '.strftime(get_string('strftimedaydate'), $course->timemodified).' ('.sdctools_timeago($course->timemodified).' ago)</dd>';
+    echo '  <dd><b>Created:</b> '.strftime(get_string('strftimedaydate'), $course->timecreated).' ('.sdctools_timeago($course->timecreated).' ago)</dd>';
+    echo '  <dd><b>Modified:</b> '.strftime(get_string('strftimedaydate'), $course->timemodified).' ('.sdctools_timeago($course->timemodified).' ago)</dd>';
     echo '</dl>';
 
 
+    // Details. 
     echo '<dl>';
     echo '<dt>Details</dt>';
     echo '  <dd><b>Format:</b> '.ucfirst($course->format).'</dd>';
@@ -97,15 +98,174 @@ if ($cid) {
     echo '  <dd><b>Sections:</b> '.$courseformat->value.'</dd>';
     $mods = unserialize($course->modinfo);
     $cmods = count($mods);
-    $cmods =42;
     echo '  <dd><b>Modules:</b> '.$cmods.'</dd>';
     echo '  <dd><b>Average Modules per Section:</b> '.number_format($cmods/$courseformat->value, 1).'</dd>';
-    
+    $hits = $DB->get_record_sql('SELECT COUNT(*) AS hits FROM mdl_log WHERE course = '.$cid.';');
+    echo '  <dd><b>Activity:</b> '.number_format($hits->hits)." 'hits' since creation</dd>";
+    $lastaccessed = $DB->get_record_select('log', 'course = '.$cid.' ORDER BY id DESC LIMIT 1', null, 'time, userid');
+    if ($lastaccessed) {
+        $lastaccesseduser = $DB->get_record('user', array('id' => $lastaccessed->userid), 'firstname, lastname');
+        $out = strftime(get_string('strftimedaydatetime'), $lastaccessed->time).' ('.sdctools_timeago($lastaccessed->time).
+        ' ago) by '.html_writer::link(new moodle_url('/user/view.php', array('id' => $lastaccessed->userid)), $lastaccesseduser->firstname.' '.$lastaccesseduser->lastname);
+    } else {
+        $out = '<i>(never)</i>';
+    }
+    echo '  <dd><b>Last accessed:</b> '.$out.'</dd>';
+
     echo '</dl>';
+
+
+    // Students and Teachers and such...
+    echo '<dl>';
+    echo '<dt>Enrollees</dt>';
+    $coursecontext = $DB->get_record('context', array('instanceid' => $cid, 'contextlevel' => '50'), 'id');
+    // Get all roles, then remove what we don't need.
+    $roles = $DB->get_records('role', null, 'id ASC', 'id, name, description');
+    unset ($roles['6'], $roles['7'], $roles['8'], $roles['10']);
+    foreach ($roles as $role) {
+        $roleids = $DB->get_records('role_assignments', array('contextid' => $coursecontext->id, 'roleid' => $role->id), null, 'userid');
+        $rolecount = count($roleids);
+        $roleusers = array();
+        foreach ($roleids as $rid) {
+            $roleusers[] = $DB->get_record('user', array('id' => $rid->userid), 'id, firstname, lastname');
+        }
+        if ($roleusers) {
+            $roleusersorted = array();
+            foreach ($roleusers as $roleuser) {
+                $roleusersorted[$roleuser->id] = $roleuser->firstname.' '.$roleuser->lastname;
+            }
+            asort($roleusersorted);
+            $out = '';
+            foreach ($roleusersorted as $roleuserkey => $roleuservalue) {
+                if ($pictures) {
+                    $out .= html_writer::link(new moodle_url('/user/view.php', array('id' => $roleuserkey)),
+                        html_writer::empty_tag('img', array('src' => $CFG->wwwroot.'/user/pix.php/'.$roleuserkey.'/f1.jpg', 'alt' => $roleuservalue)), array('title' => $roleuservalue));
+                } else {
+                    $out .= html_writer::link(new moodle_url('/user/view.php', array('id' => $roleuserkey)), $roleuservalue).', ';
+                }
+            }
+            $out = sdctools_trimcomma($out);
+        } else {
+            $out = '<i>(none)</i>';
+        }
+        $plural = (substr($role->name, -1) == 's') ? '' : $rolecount == 1 ? '' : 's';
+        echo '  <dd><b><abbr title="'.strip_tags($role->description).'">'.number_format($rolecount).' '.ucfirst($role->name).$plural.':</abbr></b> '.$out.'</dd>';
+    }
+    echo '</dl>';
+
+    // Students and Teachers and such...
+    echo '<dl>';
+    echo '<dt>Administrative Things</dt>';
+//    $sql8 = "SELECT laststarttime, laststatus FROM mdl_backup_courses WHERE id = '".$row['cid']."';";
+
+    $lastbackup = $DB->get_record('backup_courses', array('courseid' => $cid), 'laststarttime, laststatus');
+    if ($lastbackup) {
+        $out = '';
+        switch ($lastbackup->laststatus) {
+            case 1:
+                $out = '<span style="color: #070;">OK</span>';
+                break;
+            case 2:
+                $out = '<span style="color: #f00;">Unfinished</span>';
+                break;
+            case 3:
+                $out = '<span style="color: #f70;">Skipped</span>';
+                break;
+            case 0:
+                $out = '<span style="color: #f00;">Error</span>';
+                break;
+        }
+        echo '  <dd><b>Last Backup:</b> '.strftime(get_string('strftimedaydatetime'), $lastbackup->laststarttime).'</dd>';
+        echo '  <dd><b>Backup Status:</b> '.$out.'</dd>';
+    } else {
+        echo '  <dd><b>Last Backup:</b> <i>(none found)</i></dd>';
+    }
+    echo '  <dd><b>Enrolment Plugin Defaults:</b> &quot;manual self&quot; or &quot;category manual self&quot;</dd>';
+    $enrolmentplugins = $DB->get_records_select('enrol', 'courseid = '.$cid, null, 'enrol', 'enrol, status');
+    if ($enrolmentplugins) {
+        $out = '';
+        foreach ($enrolmentplugins as $eplugin) {
+            $out .= $eplugin->enrol.', ';
+        }
+        $out = sdctools_trimcomma($out);
+        $edit = '';
+        if ($out !== 'manual self' && $out !== 'category manual self') {
+            $edit = ' (<a href="'.$CFG->wwwroot.'/enrol/instances.php?id='.$cid.'">Edit</a>)';
+        }
+        echo '  <dd><b>Enrolment Plugins:</b> '.$out.$edit.'</dd>';
+    } else {
+        echo '  <dd><b>Enrolment Plugins:</b> <i>(none found)</i></dd>';
+    }
+
+    $needle = 'absence';
+    $searchterm = array('%'.$needle.'%', $cid);
+    $out = '';
+    $cs_n = $DB->get_records_select('course_sections', 'name LIKE ? AND course = ?', $searchterm, null, 'id');
+    if ($cs_n) {
+        //$cs_n_count = count($cs_n);
+        //$out .= 'Section name: '.$cs_n_count.'. ';
+        $out .= 'section name, ';
+    }
+    $cs_s = $DB->get_records_select('course_sections', 'summary LIKE ? and course like ?', $searchterm, null, 'id');
+    if ($cs_s) {
+        //$cs_s_count = count($cs_s);
+        //$out .= 'Section summary: '.$cs_s_count.'. ';
+        $out .= 'section summary, ';
+    }
+    $r_n = $DB->get_records_select('resource', 'name LIKE ? and course like ?', $searchterm, null, 'id');
+    if ($r_n) {
+        //$r_n_count = count($r_n);
+        //$out .= 'Resource name: '.$r_n_count.'. ';
+        $out .= 'resource name, ';
+    }
+    $r_i = $DB->get_records_select('resource', 'intro LIKE ? and course like ?', $searchterm, null, 'id');
+    if ($r_i) {
+        //$r_i_count = count($r_i);
+        //$out .= 'Resource introduction: '.$r_i_count.'. ';
+        $out .= 'resource introduction, ';
+    }
+    $p_n = $DB->get_records_select('page', 'name LIKE ? and course like ?', $searchterm, null, 'id');
+    if ($p_n) {
+        //$p_n_count = count($p_n);
+        //$out .= 'Page name: '.$p_n_count.'. ';
+        $out .= 'page name, ';
+    }
+    $p_i = $DB->get_records_select('page', 'intro LIKE ? and course like ?', $searchterm, null, 'id');
+    if ($p_i) {
+        //$p_i_count = count($p_i);
+        //$out .= 'Page intro: '.$p_i_count.'. ';
+        $out .= 'page intro, ';
+    }
+    $u_n = $DB->get_records_select('url', 'name LIKE ? and course like ?', $searchterm, null, 'id');
+    if ($u_n) {
+        //$u_n_count = count($u_n);
+        //$out .= 'URL name: '.$u_n_count.'. ';
+        $out .= 'URL name, ';
+    }
+    $l_n = $DB->get_records_select('label', 'name LIKE ? and course like ?', $searchterm, null, 'id');
+    if ($l_n) {
+        //$l_n_count = count($l_n);
+        //$out .= 'Label name: '.$l_n_count.'. ';
+        $out .= 'label name';
+    }
+    $out = sdctools_trimcomma($out);
+    if ($out) {
+        echo '  <dd><b>Absence Activity:</b> Yes ('.$out.')</dd>';
+    } else {
+        echo '  <dd><b>Absence Activity:</b> <i>(none found)</i></dd>';
+    }
+    echo '</dl>';
+
+    // Picture control.
+    if ($pictures) {
+        echo '<p>'.html_writer::link(new moodle_url('coursereports.php', array('id' => $cid, 'pictures' => 0)), get_string('turnpicturesoff', 'tool_sdctools')).'</p>';
+    } else {
+        echo '<p>'.html_writer::link(new moodle_url('coursereports.php', array('id' => $cid, 'pictures' => 1)), get_string('turnpictureson', 'tool_sdctools')).'</p>';
+    }
 
     echo $OUTPUT->box_end();
 
-print_object($course);
+//print_object($course);
 //print_object(unserialize($course->modinfo));
 
 } else { // If we don't have the $cid, print a nice form.
@@ -139,6 +299,7 @@ print_object($course);
     echo "  <div>\n";
     echo html_writer::label(get_string('selectacourse'), 'menuid', false, array('class' => 'accesshide'));
     echo html_writer::select($courses_alpha, 'id', $cid, false);
+    echo '  <input type="hidden" name="pictures" value="'.$pictures.'" />';
     echo '  <input type="submit" value="'.get_string('getcoursereport', 'tool_sdctools').'" />';
     echo '  </div>';
     echo '</form>';
@@ -149,6 +310,7 @@ print_object($course);
     echo "  <div>\n";
     echo html_writer::label(get_string('selectacourse'), 'menuid', false, array('class' => 'accesshide'));
     echo html_writer::select($courses_numeric, 'id', $cid, false);
+    echo '  <input type="hidden" name="pictures" value="'.$pictures.'" />';
     echo '  <input type="submit" value="'.get_string('getcoursereport', 'tool_sdctools').'" />';
     echo '  </div>';
     echo '</form>';
