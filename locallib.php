@@ -104,7 +104,11 @@ function sdctools_timeago($int, $ago = true) {
         $out .= ($seconds == 1) ? ' '.get_string('second', 'tool_sdctools') : ' '.get_string('seconds');
     }
 
-    return sdctools_trimcomma($out);
+    if ($ago) {
+        return sdctools_trimcomma($out).' '.get_string('ago', 'tool_sdctools');
+    } else {
+        return sdctools_trimcomma($out);
+    }
 }
 
 /**

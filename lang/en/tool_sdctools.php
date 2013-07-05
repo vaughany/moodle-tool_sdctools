@@ -30,10 +30,26 @@ $string['tableofcontents']        = 'Table of Contents';
 $string['emailchecks']            = 'Email Checks';
 $string['coursereports']          = 'Course Reports';
 $string['coursereportspictures']  = 'with pictures';
+$string['second']                 = 'second';
 
 // Server details strings.
-$string['serverdetailsheader']  = 'Server details';
-$string['moodledetailsheader']  = 'Moodle details';
+$string['serverdetailsheader']        = 'Server details';
+$string['moodledetailsheader']        = 'Moodle details';
+$string['operatingsystem']            = 'Operating System';
+$string['averageload']                = 'Average Load';
+$string['averageloadexample']         = '(1/5/15m [100%])';
+$string['linuxcpuload']               = 'Understanding Linux CPU load';
+$string['processes']                  = 'Processes';
+$string['processesexample']           = '(running/total)';
+$string['webserver']                  = 'Web Server';
+$string['phpversion']                 = 'PHP Version';
+$string['serveruptime']               = 'Server Uptime';
+$string['moodleversion']              = 'Moodle Version';
+$string['internal']                   = 'Internal';
+$string['usersactivedeletedtotal']    = 'Users: Active / Deleted / Total';
+$string['coursesvisiblehiddentotal']  = 'Courses: Visible / Hidden / Total';
+$string['running']                    = ' and running';
+$string['backupstatus']               = 'Backup Status';
 
 // Email-checking strings.
 $string['emptyemailname']   = 'Empty email check';
@@ -57,3 +73,4 @@ $string['getcoursereport']  = 'Get this course\'s report';
 $string['coursereportfor']  = 'Course report for ';
 $string['turnpicturesoff']  = 'Turn pictures off';
 $string['turnpictureson']   = 'Turn pictures on';
+$string['ago']              = 'ago';
