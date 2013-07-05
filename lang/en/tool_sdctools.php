@@ -50,9 +50,9 @@ $string['sdcemails']            = '<strong>Result:</strong> No users have non-SD
 
 // Course report strings.
 $string['coursereportname'] = 'Cross-Moodle course report';
-$string['coursesby']        = 'Choose course by...';
-$string['byname']           = '...name:';
-$string['byid']             = '...course ID:';
+$string['timewarning']      = 'A single report is generated quite quickly, but viewing all reports can take considerable time to generate and may place a heavy load on the server.';
+$string['byname']           = 'Choose course by name (A, B, C, D):';
+$string['byid']             = 'Choose course by course ID (1, 2, 3, 4):';
 $string['getcoursereport']  = 'Get this course\'s report';
 $string['coursereportfor']  = 'Course report for ';
 $string['turnpicturesoff']  = 'Turn pictures off';
