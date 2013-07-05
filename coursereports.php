@@ -106,8 +106,8 @@ if ($cid) {
 
         echo '<dl>';
         echo '<dt>Created and Modified</dt>';
-        echo '  <dd><b>Created:</b> '.strftime(get_string('strftimedaydate'), $course->timecreated).' ('.sdctools_timeago($course->timecreated).' ago)</dd>';
-        echo '  <dd><b>Modified:</b> '.strftime(get_string('strftimedaydate'), $course->timemodified).' ('.sdctools_timeago($course->timemodified).' ago)</dd>';
+        echo '  <dd><b>Created:</b> '.strftime(get_string('strftimedaydate'), $course->timecreated).' ('.sdctools_timeago($course->timecreated).')</dd>';
+        echo '  <dd><b>Modified:</b> '.strftime(get_string('strftimedaydate'), $course->timemodified).' ('.sdctools_timeago($course->timemodified).')</dd>';
         echo '</dl>';
 
 
@@ -130,7 +130,7 @@ if ($cid) {
         if ($lastaccessed) {
             $lastaccesseduser = $DB->get_record('user', array('id' => $lastaccessed->userid), 'firstname, lastname');
             $out = strftime(get_string('strftimedaydatetime'), $lastaccessed->time).' ('.sdctools_timeago($lastaccessed->time).
-            ' ago) by '.html_writer::link(new moodle_url('/user/view.php', array('id' => $lastaccessed->userid)), $lastaccesseduser->firstname.' '.$lastaccesseduser->lastname);
+            ') by '.html_writer::link(new moodle_url('/user/view.php', array('id' => $lastaccessed->userid)), $lastaccesseduser->firstname.' '.$lastaccesseduser->lastname);
         } else {
             $out = '<i>(never)</i>';
         }
