@@ -35,6 +35,7 @@ function sdctools_tableofcontents() {
     $out .= '<ul>';
     $out .= '<li><a href="index.php">'.get_string('pluginname', 'tool_sdctools').'</a></li>';
     $out .= '<li><a href="emails.php">'.get_string('emailchecks', 'tool_sdctools').'</a></li>';
+    $out .= '<li><a href="users.php">'.get_string('userchecks', 'tool_sdctools').'</a></li>';
     //$out .= '<li><a href="coursereports.php">'.get_string('coursereports', 'tool_sdctools').'</a>';
     //$out .= ' (<a href="coursereports.php?pictures=1">'.get_string('coursereportspictures', 'tool_sdctools').'</a>)</li>';
 

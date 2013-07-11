@@ -77,7 +77,7 @@ if ($cid) {
         echo $OUTPUT->heading(get_string('coursereportfor', 'tool_sdctools').$course->fullname);
 
         echo '<dl>';
-        echo '<dt>Course Name/s</dt>';
+        echo '<dt>'.get_string('coursedetail', 'tool_sdctools').'</dt>';
         $buttons = array();
         $buttons[] = html_writer::link(new moodle_url('/course/view.php',
                         array('id' => $cid)),
@@ -88,20 +88,20 @@ if ($cid) {
                         html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/edit'),
                         'alt' => get_string('edit'), 'class' => 'iconsmall')), array('title' => get_string('edit')));
 
-        echo '  <dd><b>Full:</b> '.$course->fullname.' '.implode(' ', $buttons).'</dd>';
-        echo '  <dd><b>Short:</b> '.$course->shortname.'</dd>';
+        echo '  <dd><b>'.get_string('full', 'tool_sdctools').':</b> '.$course->fullname.' '.implode(' ', $buttons).'</dd>';
+        echo '  <dd><b>'.get_string('short', 'tool_sdctools').':</b> '.$course->shortname.'</dd>';
         
         $coursecategory = $DB->get_record('course_categories', array('id' => $course->category), 'name');
         if ($coursecategory) {
-            echo '  <dd><b>Category:</b> '.$coursecategory->name.'</dd>';
+            echo '  <dd><b>'.get_string('category').':</b> '.$coursecategory->name.'</dd>';
         } else {
-            echo '  <dd><b>Category:</b> No category</dd>';
+            echo '  <dd><b>'.get_string('category').':</b> No category</dd>';
         }
-        echo '  <dd><b>ID:</b> '.$course->id.'</dd>';
+        echo '  <dd><b>'.get_string('id', 'tool_sdctools').':</b> '.$course->id.'</dd>';
         $idnumber = ($course->idnumber == '') ? '<i>(blank)</i>' : $course->idnumber; 
-        echo '  <dd><b>ID number:</b> '.$idnumber.'</dd>';
+        echo '  <dd><b>'.get_string('idnumbercourse').':</b> '.$idnumber.'</dd>';
         $visible = ($course->visible == 1) ? get_string('yes') : '<span class="error">'.get_string('no').'</span>';
-        echo '  <dd><b>Visible:</b> '.$visible.'</dd>';
+        echo '  <dd><b>'.get_string('visible').':</b> '.$visible.'</dd>';
         echo '</dl>';
 
         echo '<dl>';
@@ -113,7 +113,7 @@ if ($cid) {
 
         // Details. 
         echo '<dl>';
-        echo '<dt>Details</dt>';
+        echo '<dt>Format and Access</dt>';
         echo '  <dd><b>Format:</b> '.ucfirst($course->format).'</dd>';
         if ($course->format == 'weeks') {
             echo '  <dd><b>Start Date:</b> '.strftime(get_string('strftimedaydate'), $course->startdate).'</dd>';
