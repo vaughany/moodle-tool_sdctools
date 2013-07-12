@@ -51,6 +51,10 @@ $string['usersactivedeletedtotal']    = 'Users: Active / Deleted / Total';
 $string['coursesvisiblehiddentotal']  = 'Courses: Visible / Hidden / Total';
 $string['running']                    = ' and running';
 $string['backupstatus']               = 'Backup Status';
+$string['newuserstatsheading']        = 'Recent new user statistics';
+$string['newuserstatsstrapline']      = 'Number of users created per <i>time period</i>. Date used is <i>firstaccess</i> which is not always populated.';
+$string['firstaccessstrapline']       = 'Those with <i>firstaccess</i> set, compared to those without.';
+
 
 // Email-checking strings.
 $string['emptyemailname']   = 'Empty email check';
@@ -77,10 +81,14 @@ $string['coursedetail']     = 'Course Detail';
 $string['full']             = 'Full';
 $string['short']            = 'Short';
 $string['id']               = 'ID';
+$string['blank']            = '<i>(blank)</i>';
+$string['none']             = '<i>(none)</i>';
+$string['nonefound']        = '<i>(none found)</i>';
+$string['picturewarning']   = '<b>Note:</b> Pictures are only shown where the user has uploaded one: the theme default picture is not shown.';
 
 // User-checking strings.
 $string['restoredusersheader']    = 'Restored users';
-$string['restoredusersstrapline'] = 'Users with the password set to &quot;restored&quot;.';
+$string['restoredusersstrapline'] = 'Users with the password set to &quot;restored&quot; possibly shouldn\'t exist within the system.';
 $string['norestoredusers']        = '<strong>Result:</strong> No users in the \'users\' table have their password set to &quot;restored&quot;.';
 $string['restoredusers']          = '<strong>Result:</strong> The following {$a} users have their password set to &quot;restored&quot;:';
 

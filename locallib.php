@@ -63,7 +63,7 @@ function sdctools_idprefix($in) {
 /**
  * A 'time ago' script.
  */
-function sdctools_timeago($int, $ago = true) {
+function sdctools_timeago($int, $ago = true, $short = true) {
 
     $in = ($ago) ? (time() - $int) : $int;
     
@@ -86,23 +86,43 @@ function sdctools_timeago($int, $ago = true) {
     // Omit any period of time with no data.
     if ($years) {
         $out .= $years;
-        $out .= ($years == 1) ? ' '.get_string('year').', ' : ' '.get_string('years').', ';
+        if ($short) {
+            $out .= 'y, ';
+        } else {
+            $out .= ($years == 1) ? ' '.get_string('year').', ' : ' '.get_string('years').', ';
+        }
     }
     if ($days) {
         $out .= $days;
-        $out .= ($days == 1) ? ' '.get_string('day').', ' : ' '.get_string('days').', ';
+        if ($short) {
+            $out .= 'd, ';
+        } else {
+            $out .= ($days == 1) ? ' '.get_string('day').', ' : ' '.get_string('days').', ';
+        }
     }
     if ($hours) {
         $out .= $hours;
-        $out .= ($hours == 1) ? ' '.get_string('hour').', ' : ' '.get_string('hours').', ';
+        if ($short) {
+            $out .= 'h, ';
+        } else {
+            $out .= ($hours == 1) ? ' '.get_string('hour').', ' : ' '.get_string('hours').', ';
+        }
     }
     if ($minutes) {
         $out .= $minutes;
-        $out .= ($minutes == 1) ? ' '.get_string('minute').', ' : ' '.get_string('minutes').', ';
+        if ($short) {
+            $out .= 'm, ';
+        } else {
+            $out .= ($minutes == 1) ? ' '.get_string('minute').', ' : ' '.get_string('minutes').', ';
+        }
     }
     if ($seconds) {
         $out .= $seconds;
-        $out .= ($seconds == 1) ? ' '.get_string('second', 'tool_sdctools') : ' '.get_string('seconds');
+        if ($short) {
+            $out .= 's ';
+        } else {
+            $out .= ($seconds == 1) ? ' '.get_string('second', 'tool_sdctools') : ' '.get_string('seconds');
+        }
     }
 
     if ($ago) {
