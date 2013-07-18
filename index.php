@@ -230,8 +230,8 @@ $table->head[] = get_string('yes');
 $table->head[] = get_string('total');
 $table->width = "25%";
 $row = array ();
-$row[] = number_format($firstaccess[0]->no);
-$row[] = number_format($firstaccess[0]->yes);
+$row[] = number_format($firstaccess[0]->no).' ('.number_format(($firstaccess[0]->no/$firstaccess[0]->total)*100, 1).'%)';
+$row[] = number_format($firstaccess[0]->yes).' ('.number_format(($firstaccess[0]->yes/$firstaccess[0]->total)*100, 1).'%)';
 $row[] = number_format($firstaccess[0]->total);
 $table->data[] = $row;
 
