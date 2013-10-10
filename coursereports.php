@@ -47,25 +47,27 @@ echo $OUTPUT->heading(get_string('pageheader', 'tool_sdctools'));
 
 echo sdctools_tableofcontents();
 
-
 /* If we have a course ID, print a nice report about that course. */
 if ($cid) {
 
     // If that course ID is -1 or -2, loop through ALL courses in different orders.
     $allcid = array();
     if ($cid == -1) {
+        $headingnumber = 1;
         $allcourses = $DB->get_records('course', null, 'id ASC', 'id');
         foreach ($allcourses as $allcourse) {
             $allcid[] = $allcourse->id;
         }
 
     } else if ($cid == -2) {
+        $headingnumber = 1;
         $allcourses = $DB->get_records('course', null, 'fullname ASC', 'id');
         foreach ($allcourses as $allcourse) {
             $allcid[] = $allcourse->id;
         }
 
     } else {
+        $headingnumber = 0;
         $allcid[] = $cid;
     }
 
@@ -136,7 +138,17 @@ if ($cid) {
         echo '  <dd><b>'.get_string('sections').':</b> '.$courseformat->value.'</dd>';
         $mods = unserialize($course->modinfo);
         $cmods = count($mods);
-        echo '  <dd><b>'.get_string('managemodules').':</b> '.$cmods.'</dd>';
+        $modulebreakdown = array();
+        $out = ' (';
+        foreach ($mods as $key => $value) {
+            $modulebreakdown[$value->mod]++;
+        }
+        ksort($modulebreakdown);
+        foreach ($modulebreakdown as $key => $value) {
+            $out .=  ucfirst($key).': '.$value.'. ';
+        }
+        $out = rtrim($out) . ')';
+        echo '  <dd><b>'.get_string('managemodules').':</b> '.$cmods.$out.'</dd>';
         echo '  <dd><b>'.get_string('avgmodules', 'tool_sdctools').'</b> '.number_format($cmods/$courseformat->value, 1).'</dd>';
         $hits = $DB->get_record_sql('SELECT COUNT(*) AS hits FROM mdl_log WHERE course = '.$cid.';');
         echo '  <dd><b>'.get_string('activity', 'tool_sdctools').'</b> '.number_format($hits->hits).get_string('hitssincecreation', 'tool_sdctools').'</dd>';
@@ -314,6 +326,9 @@ if ($cid) {
         echo $OUTPUT->box_end();
 
     } // End of if ($cid)
+
+    // $_SERVER["REQUEST_TIME_FLOAT"] is only available in PHP 5.4 and newer.
+    echo '<p>Report took '.(microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]).' seconds to generate.</p>';
 
 } else { // If we don't have the $cid, print a nice form.
 
