@@ -25,7 +25,7 @@ Has been checked against the 'Code Checker' and 'Moodle PHPDoc Check' local plug
 
 ## Requirements
 
-Moodle 2.x. Tested with 2.4.3, 2.5.1 and 2.6.1.
+Moodle 2.6. Tested with 2.6.1 and 2.6.2.
 
 ## Installation
 
@@ -42,9 +42,11 @@ After installation, you should see a new option 'SDC Tools' in the Site Administ
 * Make the absence activity checker configurable.
 * More detailed breakdown of modules available in the course.
 * Largest / smallest / busiest / quietest courses.
+* Ability to toggle backups for individual courses.
 
 ## History
 
+* 2014-03-26, version 0.2.0:    Changes to the way course module info ($course->modinfo) is stored mean this plugin requires Moodle 2.6 as a minimum. There's a 2.5 (and earlier) version in a separate branch of the code on GitHub if required.
 * 2014-03-06, version 0.1.4:    Added number of modules (visible, hidden, total and average across courses) and blocks (total and average across courses).
 * 2013-07-18, version 0.1.3:    Added many new features and changed to a multi-page format.
 * 2013-03-26, version 0.1.2:    Check for non-SDC email addresses; change to code to better select/exclude email addresses.
