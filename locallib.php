@@ -36,7 +36,7 @@ function sdctools_tableofcontents($highlight = false) {
     $out = '';
 
     $out .= '<ul>';
-    
+
     if ($highlight == strtolower('index')) {
         $out .= '<li><strong>'.html_writer::link(new moodle_url('index.php'), get_string('pluginname', 'tool_sdctools')).'</strong></li>';
     } else {
@@ -61,7 +61,7 @@ function sdctools_tableofcontents($highlight = false) {
     } else {
         $out .= '<li>'.html_writer::link(new moodle_url('coursereports.php'), get_string('coursereports', 'tool_sdctools'));
     }
-    
+
     if ($highlight == strtolower('coursereports_pictures')) {
         $out .= ' (<strong>'.html_writer::link(new moodle_url('coursereports.php', array('pictures' => 1)), get_string('coursereportspictures', 'tool_sdctools')).'</strong>)</li>';
     } else {
