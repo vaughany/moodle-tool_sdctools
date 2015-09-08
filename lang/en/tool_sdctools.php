@@ -33,6 +33,7 @@ $string['emailchecks']            = 'Email Checks';
 $string['userchecks']             = 'User Checks';
 $string['coursereports']          = 'Course Reports';
 $string['coursereportspictures']  = 'with pictures';
+$string['leapchecks']             = 'Leap Checks and Reports';
 $string['backuptoggle']           = 'Course backup toggles';
 $string['second']                 = 'second';
 $string['module']                 = 'Module';

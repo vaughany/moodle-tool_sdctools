@@ -77,6 +77,13 @@ function sdctools_tableofcontents( $highlight = false ) {
     $out .= '<li>'.$pre.html_writer::link(new moodle_url('leapcorereport.php'), get_string('leapcorereport', 'tool_sdctools')).$suf.'</li>';
 
     $pre = $suf = '';
+    if ( $highlight == strtolower( 'leapchecks' ) ) {
+        $pre = '<strong>';
+        $suf = '</strong>';
+    }
+    $out .= '<li>' . $pre . html_writer::link( new moodle_url( 'leapchecks.php' ), get_string( 'leapchecks', 'tool_sdctools' ) ) . $suf . '</li>';
+
+    $pre = $suf = '';
     if ( $highlight == strtolower( 'backuptoggle' ) ) {
         $pre = '<strong>';
         $suf = '</strong>';
