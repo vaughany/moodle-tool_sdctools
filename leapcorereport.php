@@ -42,6 +42,29 @@ $lc_types = array(
     'leapcore_english',
     'leapcore_maths',
     'leapcore_ppd',
+    'leapcore_test',
+    'leapcore_a2_artdes',
+    'leapcore_a2_artdesphoto',
+    'leapcore_a2_artdestext',
+    'leapcore_a2_biology',
+    'leapcore_a2_busstud',
+    'leapcore_a2_chemistry',
+    'leapcore_a2_englishlang',
+    'leapcore_a2_englishlit',
+    'leapcore_a2_envsci',
+    'leapcore_a2_envstud',
+    'leapcore_a2_filmstud',
+    'leapcore_a2_geography',
+    'leapcore_a2_history',
+    'leapcore_a2_law',
+    'leapcore_a2_maths',
+    'leapcore_a2_mathsfurther',
+    'leapcore_a2_media',
+    'leapcore_a2_philosophy',
+    'leapcore_a2_physics',
+    'leapcore_a2_psychology',
+    'leapcore_a2_sociology',
+    'leapcore_btecex_applsci',
 );
 
 echo $OUTPUT->box_start();
@@ -51,7 +74,7 @@ $out = '';
 
 foreach ( $lc_types as $lc_type ) {
 
-    $out .= '<h3>Courses with &quot;' . $lc_type . '&quot; set</h3>';
+    $out .= '<h4>Courses with &quot;' . $lc_type . '&quot; set</h4>';
 
     $lc_res = $DB->get_records_select( 'course', "idnumber LIKE '%|".$lc_type."|%'", null, "id ASC", 'id, shortname, fullname' );
     $tmp = $lc_type;
