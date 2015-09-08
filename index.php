@@ -18,48 +18,40 @@
  * Admin plugin to do whatever we want!
  *
  * @package    tool_sdctools
- * @copyright  2013 Paul Vaughan {@link http://commoodle.southdevon.ac.uk}
+ * @copyright  2013-2015 Paul Vaughan {@link http://commoodle.southdevon.ac.uk}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define('NO_OUTPUT_BUFFERING', true);
+define( 'NO_OUTPUT_BUFFERING', true );
 
-require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
-require_once($CFG->dirroot.'/course/lib.php');
-require_once($CFG->libdir.'/adminlib.php');
+require_once( dirname( dirname( dirname( dirname( __FILE__ ) ) ) ) . '/config.php' );
+require_once( $CFG->dirroot . '/course/lib.php' );
+require_once( $CFG->libdir . '/adminlib.php' );
 
-require_once('locallib.php');
+require_once( 'locallib.php' );
 
 $choices        = array(5, 10, 25, 50, 100, 200);
 $defaultchoice  = 10;
-$numusers = optional_param('numusers', $defaultchoice, PARAM_INT);
-$numlogs  = optional_param('numlogs', $defaultchoice, PARAM_INT);
-if ($numusers <= 0 || $numusers > 200) {
-    $numusers = $defaultchoice;
-}
-if ($numlogs <= 0 || $numlogs > 200) {
-    $numlogs = $defaultchoice;
-}
 
+$numusers       = optional_param('numusers', $defaultchoice, PARAM_INT);
+$numlogs        = optional_param('numlogs', $defaultchoice, PARAM_INT);
 
-admin_externalpage_setup('toolsdctools');
+$numusers       = ( $numusers <= 0 || $numusers > 200 ) ? $defaultchoice : $numusers;
+$numlogs        = ( $numlogs <= 0 || $numlogs > 200 ) ? $defaultchoice : $numlogs;
 
-if (empty($CFG->loginhttps)) {
-    $securewwwroot = $CFG->wwwroot;
-} else {
-    $securewwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
-}
+admin_externalpage_setup( 'toolsdctools' );
+
+$securewwwroot = ( empty( $CFG->loginhttps ) ) ? $CFG->wwwroot : str_replace( 'http:', 'https:', $CFG->wwwroot );
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading( get_string( 'pageheader', 'tool_sdctools' ) );
 
-echo $OUTPUT->heading(get_string('pageheader', 'tool_sdctools'));
-
-echo sdctools_tableofcontents('index');
+echo sdctools_tableofcontents( 'index' );
 
 
 /* Some server details. */
 echo $OUTPUT->box_start();
-echo $OUTPUT->heading(get_string('serverdetailsheader', 'tool_sdctools'));
+echo $OUTPUT->heading( get_string( 'serverdetailsheader', 'tool_sdctools' ) );
 
 echo '<ul>';
 if (is_readable('/proc/version') && $osver = @file('/proc/version')) {
@@ -173,10 +165,18 @@ echo '<li><strong>'.get_string('backupstatus', 'tool_sdctools').'</strong> '.$ou
 
 echo '</ul>';
 
-echo '<p>'.html_writer::link(new moodle_url($securewwwroot.'/admin/phpinfo.php',
-    array()), get_string('phpinfo')).'.</p>';
+//echo '<p>'.html_writer::link(new moodle_url($securewwwroot.'/admin/phpinfo.php', array()), get_string('phpinfo')).'.</p>';
 
 // End drawing 'Moodle details' table.
+echo $OUTPUT->box_end();
+
+
+// Leap bits.
+echo $OUTPUT->box_start();
+echo $OUTPUT->heading( get_string( 'leapdetailsheader', 'tool_sdctools' ) );
+echo '<p>Check for:</p>';
+echo '<ul><li>Leap enrolment plugin (present and enabled)</li><li>Leap block (present and enabled)</li><li>Leap webservices (present and enabled and configured)</li>
+<li>Any courses not having the block enabled</li><li>Missing course code config</li><li>Missing grade tracking config</li></ul>';
 echo $OUTPUT->box_end();
 
 
@@ -203,7 +203,8 @@ $userstats = $DB->get_records_sql("SELECT
     ( SELECT COUNT(*) FROM mdl_user WHERE firstaccess > (".$now." - (60*60*24*30*6)) ) AS sixmonths,
     ( SELECT COUNT(*) FROM mdl_user WHERE firstaccess > (".$now." - (60*60*24*365)) ) AS oneyear,
     ( SELECT COUNT(*) FROM mdl_user WHERE firstaccess > (".$now." - (60*60*24*365*2)) ) AS twoyears,
-    ( SELECT COUNT(*) FROM mdl_user WHERE firstaccess > (".$now." - (60*60*24*365*3)) ) AS threeyears
+    ( SELECT COUNT(*) FROM mdl_user WHERE firstaccess > (".$now." - (60*60*24*365*3)) ) AS threeyears,
+    ( SELECT COUNT(*) FROM mdl_user WHERE firstaccess > (".$now." - (60*60*24*365*4)) ) AS fouryears
 ;");
 
 $table = new html_table();
@@ -226,6 +227,7 @@ $table->head[] = get_string('sixmonths', 'tool_sdctools');
 $table->head[] = get_string('oneyear', 'tool_sdctools');
 $table->head[] = get_string('twoyears', 'tool_sdctools');
 $table->head[] = get_string('threeyears', 'tool_sdctools');
+$table->head[] = get_string('fouryears', 'tool_sdctools');
 $table->width = "100%";
 $row = array ();
 $row[] = number_format($userstats[0]->one);
@@ -246,6 +248,7 @@ $row[] = number_format($userstats[0]->sixmonths);
 $row[] = number_format($userstats[0]->oneyear);
 $row[] = number_format($userstats[0]->twoyears);
 $row[] = number_format($userstats[0]->threeyears);
+$row[] = number_format($userstats[0]->fouryears);
 $table->data[] = $row;
 
 if (!empty($table)) {
@@ -378,6 +381,7 @@ echo $OUTPUT->box_end();
 
 
 // Some of the most recent log entries.
+// TODO: The format of the log table has changed significantly. 
 echo $OUTPUT->box_start();
 echo $OUTPUT->heading(get_string('recentlogsheader', 'tool_sdctools').'<a id="recentlogs"></a>');
 echo '<p>'.get_string('recentlogsstrapline', 'tool_sdctools')."</p>\n";
@@ -388,7 +392,7 @@ foreach ($choices as $choice) {
 }
 $out .= '/ <a href="'.$securewwwroot.'/admin/tool/sdctools/index.php#recentlogs">'.get_string('reset').'</a> ]';
 
-$recentlog = $DB->get_records('log', null, 'id DESC', '*', 0, $numlogs);
+$recentlog = $DB->get_records('logstore_standard_log', null, 'id DESC', '*', 0, $numlogs);
 
 if (!$recentlog) {
     echo '<p>'.get_string('norecentlogs', 'tool_sdctools').'</p>';

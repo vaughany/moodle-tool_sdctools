@@ -18,19 +18,19 @@
  * Link to SDC Tools admin page
  *
  * @package    tool_sdctools
- * @copyright  2013 Paul Vaughan {@link http://commoodle.southdevon.ac.uk}
+ * @copyright  2013-2015 Paul Vaughan {@link http://commoodle.southdevon.ac.uk}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined( 'MOODLE_INTERNAL' ) || die;
 
 // Define the variable for the 'off' state. 'Off' is defined as "Sat, 21 Mar 2037 01:35:21 GMT".
-define('BACKUPOFF_TIME', 2121212121);
+define( 'BACKUPOFF_TIME', 2121212121 );
 
 /**
  * Draw a common table of contents.
  */
-function sdctools_tableofcontents($highlight = false) {
+function sdctools_tableofcontents( $highlight = false ) {
     global $OUTPUT;
 
     $out = '<ul>';

@@ -18,7 +18,7 @@
  * Strings for component 'tool_sdctools', language 'en'.
  *
  * @package    tool_sdctools
- * @copyright  2013 Paul Vaughan {@link http://commoodle.southdevon.ac.uk}
+ * @copyright  2013-2015 Paul Vaughan {@link http://commoodle.southdevon.ac.uk}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -145,6 +145,7 @@ $string['sixmonths']            = '6m';
 $string['oneyear']              = '1y';
 $string['twoyears']             = '2y';
 $string['threeyears']           = '3y';
+$string['fouryears']            = '4y';
 
 // User-checking strings.
 $string['restoredusersheader']    = 'Restored users';
@@ -182,3 +183,5 @@ $string['turnoffheader']        = 'Turn backups off';
 $string['turnonheader']         = 'Turn backups back on';
 $string['turnoff']              = 'Turn off';
 $string['turnon']               = 'Turn on';
+
+$string['leapdetailsheader']    = 'Leap plugin details';
