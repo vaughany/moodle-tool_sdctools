@@ -425,14 +425,14 @@ if (!$recentlog) {
         $coursebuttons = array();
         $row = array();
 
-        if ($entry->time) {
-            $strtime = sdctools_timeago($entry->time);
+        if ( $entry->timecreated ) {
+            $strtime = sdctools_timeago( $entry->timecreated );
         } else {
             $strtime = get_string('never');
         }
 
         $userdetails    = $DB->get_record('user', array('id' => $entry->userid), 'firstname, lastname');
-        $coursedetails  = $DB->get_record('course', array('id' => $entry->course), 'fullname');
+        $coursedetails  = $DB->get_record( 'course', array( 'id' => $entry->courseid ), 'fullname' );
 
         $row[] = number_format(++$items);
         $row[] = $entry->id;
@@ -466,33 +466,33 @@ if (!$recentlog) {
         // Create the course-action buttons.
         $out = '';
         if ($coursedetails) {
-            $out = html_writer::link(new moodle_url($securewwwroot.'/course/view.php',
-                array('id' => $entry->course)), $coursedetails->fullname);
-            if ($entry->course == 1) {
-                $out .= ' ('.get_string('site').')';
+            $out = html_writer::link( new moodle_url( $securewwwroot . '/course/view.php',
+                array( 'id' => $entry->courseid ) ), $coursedetails->fullname );
+            if ( $entry->courseid == 1 ) {
+                $out .= ' (' . get_string( 'site' ) . ')';
             }
             if (is_siteadmin($USER) or !is_siteadmin($user)) {
-                $out .= ' ' . html_writer::link(new moodle_url($securewwwroot.'/course/edit.php',
-                    array('id' => $entry->course)),
-                    html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/edit'),
-                    'alt' => get_string('edit'))), array('title' => get_string('edit'))) . ' ' .
-                html_writer::link(new moodle_url($securewwwroot.'/course/delete.php',
-                    array('id' => $entry->course)),
-                    html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/delete'),
-                    'alt' => get_string('delete'))), array('title' => get_string('delete'))) . ' ' .
-                html_writer::link(new moodle_url($securewwwroot.'/report/log/index.php',
-                    array('chooselog' => 1, 'date' => '', 'showusers' => 1, 'course' => $entry->course)),
-                    html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/log'),
-                    'alt' => get_string('logs'))), array('title' => get_string('logs')));
+                $out .= ' ' . html_writer::link( new moodle_url( $securewwwroot . '/course/edit.php',
+                    array( 'id' => $entry->courseid ) ),
+                    html_writer::empty_tag( 'img', array( 'src' => $OUTPUT->pix_url( 't/edit' ),
+                    'alt' => get_string( 'edit' ) ) ) , array( 'title' => get_string( 'edit' ) ) ) . ' ' .
+                html_writer::link( new moodle_url( $securewwwroot . '/course/delete.php',
+                    array( 'id' => $entry->courseid ) ),
+                    html_writer::empty_tag( 'img', array( 'src' => $OUTPUT->pix_url( 't/delete' ),
+                    'alt' => get_string( 'delete' ) ) ), array( 'title' => get_string( 'delete' ) ) ) . ' ' .
+                html_writer::link( new moodle_url( $securewwwroot . '/report/log/index.php',
+                    array( 'chooselog' => 1, 'date' => '', 'showusers' => 1, 'course' => $entry->courseid ) ),
+                    html_writer::empty_tag( 'img', array( 'src' => $OUTPUT->pix_url( 't/log' ),
+                    'alt' => get_string( 'logs' ) ) ), array( 'title' => get_string( 'logs' ) ) );
             }
         } else {
             $out = get_string('none', 'tool_sdctools');
         }
         $row[] = $out;
 
-        $row[] = $entry->module.' / '.$entry->action;
-        $row[] = html_writer::link(new moodle_url($securewwwroot.'/'.$entry->url,
-                array()), $entry->url);
+        $row[] = $entry->component . ' / ' . $entry->action;
+        //$row[] = html_writer::link( new moodle_url( $securewwwroot . '/' . $entry->url, array() ), $entry->url );
+        $row[] = '[redacted]';
         $table->data[] = $row;
     }
 

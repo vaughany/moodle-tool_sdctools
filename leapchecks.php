@@ -48,7 +48,7 @@ echo $OUTPUT->heading( get_string( 'leapchecks', 'tool_sdctools' ) );
 // TODO: lots of options for checking the configuration (e.g. course code/s) and addition to courses.
 echo '<h4>Leap Enrolment Plugin</h4>';
 
-$enrols = enrol_get_plugins(false);
+$enrols = enrol_get_plugins( false );
 $leapenrolpresent = false;
 foreach ( $enrols as $enrol => $instance ) {
     if ( $enrol == 'leap' ) {
@@ -57,20 +57,21 @@ foreach ( $enrols as $enrol => $instance ) {
     }
 }
 
+$out = '';
 if ( $leapenrolpresent ) {
-    echo '<p>The Leap enrolment plugin is installed.</p>';
+    $out .= '<p>The Leap enrolment plugin is installed ';
 
     // Check to see if it's enabled or not.
     if ( enrol_is_enabled( 'leap' ) ) {
-        echo '<p>The Leap enrolment plugin is enabled.</p>';
+        $out .= 'and enabled.</p>';
     } else {
-        echo '<p><strong>Problem:</strong> The Leap enrolment plugin is not enabled.</p>';
+        $out .= '<strong>but not enabled</strong>.</p>';
     }
 
 } else {
-    echo '<p><strong>Problem:</strong> The Leap enrolment plugin is not installed.</p>';
+    $out .= '<p><strong>Problem:</strong> The Leap enrolment plugin is not installed.</p>';
 }
-
+echo $out;
 
 
 // Block.
@@ -85,12 +86,13 @@ foreach ( $blocks as $block ) {
     }
 }
 
+$out = '';
 if ( $leapblockpresent ) {
-    echo '<p>The Leap block is installed.</p>';
+    $out .= '<p>The Leap block is installed.</p>';
 } else {
-    echo '<p><strong>Problem:</strong> The Leap block is not installed.</p>';
+    $out .= '<p><strong>Problem:</strong> The Leap block is not installed.</p>';
 }
-
+echo $out;
 
 
 // Web services.
