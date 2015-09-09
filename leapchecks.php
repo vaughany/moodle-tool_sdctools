@@ -27,6 +27,7 @@ define( 'NO_OUTPUT_BUFFERING', true );
 require_once( dirname( dirname( dirname( dirname( __FILE__ ) ) ) ) . '/config.php' );
 require_once( $CFG->libdir . '/adminlib.php' );
 require_once( $CFG->libdir . '/blocklib.php' );
+require_once( '../../../blocks/leap/locallib.php' );
 
 require_once( 'locallib.php' );
 
@@ -49,16 +50,16 @@ echo $OUTPUT->heading( get_string( 'leapchecks', 'tool_sdctools' ) );
 echo '<h4>Leap Enrolment Plugin</h4>';
 
 $enrols = enrol_get_plugins( false );
-$leapenrolpresent = false;
+$leapenrolinstalled = false;
 foreach ( $enrols as $enrol => $instance ) {
     if ( $enrol == 'leap' ) {
-        $leapenrolpresent = true;
+        $leapenrolinstalled = true;
         continue;
     }
 }
 
 $out = '';
-if ( $leapenrolpresent ) {
+if ( $leapenrolinstalled ) {
     $out .= '<p>The Leap enrolment plugin is installed ';
 
     // Check to see if it's enabled or not.
@@ -74,31 +75,71 @@ if ( $leapenrolpresent ) {
 echo $out;
 
 
+
 // Block.
 echo '<h4>Leap Block</h4>';
 
 $blocks = $PAGE->blocks->get_installed_blocks();
-$leapblockpresent = false;
+$leapblockinstalled = false;
 foreach ( $blocks as $block ) {
     if ( $block->name == 'leap' ) {
-        $leapblockpresent = true;
+        $leapblockinstalled = true;
         continue;
     }
 }
 
 $out = '';
-if ( $leapblockpresent ) {
-    $out .= '<p>The Leap block is installed.</p>';
+if ( $leapblockinstalled ) {
+    $out .= '<p>The Leap block is installed, ';
+
+    $leap_url = get_config( 'block_leap', 'leap_url' );
+    if ( empty( $leap_url ) ) {
+        $out .= 'but the <strong>\'Leap URL\' config setting is not set</strong>, ';
+    } else {
+        $out .= 'and the \'Leap URL\' config setting is set, ';
+    }
+
+    $auth_username = get_config( 'block_leap', 'auth_username' );
+    if ( empty( $auth_username ) ) {
+        $out .= 'and the <strong>\'Leap user name\' config setting is not set</strong>, ';
+    } else {
+        $out .= 'and the \'Leap user name\' config setting is set, ';
+    }
+
+// auth token, requires leap block locallib.
+    $auth_token = get_auth_token();
+
+
+
+
+    $out .= '</p>';
 } else {
     $out .= '<p><strong>Problem:</strong> The Leap block is not installed.</p>';
 }
 echo $out;
 
+$out = '<ul>';
+//if ( $leapblockinstalled ) {
+    $courses = $DB->get_records( 'course' );
+    foreach ( $courses as $course ) {
+        $out .= '<li>' . html_writer::link( new moodle_url( '/course/view.php', array( 'id' => $course->id ) ), $course->fullname . ' (' . number_format( $course->id ) . ')' ) . '</li>';
+
+    }
+//}
+$out .= '</ul>';
+echo $out;
+
+
 
 // Web services.
 echo '<h4>Leap Web Services</h4>';
-
-
+$out = '';
+if ( $leapwebservicesinstalled = $DB->get_record( 'config_plugins', array( 'plugin' => 'local_leapwebservices', 'name' => 'version' ) ) ) {
+    $out .= '<p>The Leap Webservices plugin is installed.</p>';
+} else {
+    $out .= '<p><strong>Problem:</strong> The Leap Webservices plugin is not installed.</p>';
+}
+echo $out;
 
 
 echo $OUTPUT->box_end();
