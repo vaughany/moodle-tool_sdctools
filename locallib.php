@@ -69,12 +69,15 @@ function sdctools_tableofcontents( $highlight = false ) {
     }
     $out .= ' ('.$pre.html_writer::link(new moodle_url('coursereports.php', array('pictures' => 1)), get_string('coursereportspictures', 'tool_sdctools')).$suf.')</li>';
 
+    // Course code search in the Leap block.
     $pre = $suf = '';
-    if ( $highlight == strtolower( 'leapcorereport' ) ) {
+    if ( $highlight == strtolower( 'leapblockcoursecodes' ) ) {
         $pre = '<strong>';
         $suf = '</strong>';
     }
-    $out .= '<li>'.$pre.html_writer::link(new moodle_url('leapcorereport.php'), get_string('leapcorereport', 'tool_sdctools')).$suf.'</li>';
+    $out .= '<li>'.$pre.html_writer::link(new moodle_url('leapblockcoursecodes.php'), get_string('leapblockcoursecodes', 'tool_sdctools')).$suf.'</li>';
+
+    $out .= '<li>' . html_writer::link( new moodle_url('leapcorereport.php'), get_string('leapcorereport', 'tool_sdctools') . ' (deprecated)', array( 'class' => 'dimmed' ) ) . '</li>';
 
     $pre = $suf = '';
     if ( $highlight == strtolower( 'leapchecks' ) ) {

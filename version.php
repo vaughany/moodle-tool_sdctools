@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version    = 2015090900;
+$plugin->version    = 2015091700;
 $plugin->requires   = 2013111800;       // Requires Moodle 2.6
 $plugin->component  = 'tool_sdctools';
 $plugin->maturity   = MATURITY_BETA;

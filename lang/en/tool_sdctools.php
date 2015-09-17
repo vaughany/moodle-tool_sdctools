@@ -28,16 +28,17 @@ $string['pluginname']       = 'SDC Tools';
 $string['pageheader']       = 'South Devon College Admin Tools';
 
 // Table of contents strings.
-$string['tableofcontents']        = 'Table of Contents';
-$string['emailchecks']            = 'Email Checks';
-$string['userchecks']             = 'User Checks';
-$string['coursereports']          = 'Course Reports';
-$string['coursereportspictures']  = 'with pictures';
-$string['leapchecks']             = 'Leap Checks and Reports';
-$string['backuptoggle']           = 'Course backup toggles';
-$string['second']                 = 'second';
-$string['module']                 = 'Module';
-$string['leapcorereport']         = 'LEAPCORE Report';
+$string['tableofcontents']              = 'Table of Contents';
+$string['emailchecks']                  = 'Email Checks';
+$string['userchecks']                   = 'User Checks';
+$string['coursereports']                = 'Course Reports';
+$string['coursereportspictures']        = 'with pictures';
+$string['leapchecks']                   = 'Leap Checks and Reports';
+$string['backuptoggle']                 = 'Course backup toggles';
+$string['second']                       = 'second';
+$string['module']                       = 'Module';
+$string['leapblockcoursecodes']         = 'Leap block course codes';
+$string['leapcorereport']               = 'LEAPCORE Report';
 
 // Server details strings.
 $string['serverdetailsheader']          = 'Server details';
@@ -186,3 +187,9 @@ $string['turnoff']              = 'Turn off';
 $string['turnon']               = 'Turn on';
 
 $string['leapdetailsheader']    = 'Leap plugin details';
+
+// Leap block course code search strings
+$string['leapblockcoursecodeheader']    = 'Search Leap blocks for a course code';
+$string['leapblockcoursecode']          = 'Enter a course code here';
+$string['leapblockcoursecodego']        = 'Search';
+
